@@ -26,9 +26,6 @@ function startTimer() {
       centiseconds = 0;
       seconds++;
     }
-    if (seconds >= 60) {
-      seconds = 0;
-    }
 
     updateDisplay();
 
@@ -39,15 +36,11 @@ function startTimer() {
 function updateDisplay() {
   const minutes = Math.floor(seconds / 60);
   const displaySeconds = seconds % 60;
-  const displayCentiseconds = centiseconds;
+  const displaycentiseconds = centiseconds;
 
-  chronoDisplay.textContent = `${padZero(minutes)}:${padZero(
+  chronoDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(
     displaySeconds
-  )}:${padZero(displayCentiseconds)}`;
-}
-
-function padZero(value) {
-  return value < 10 ? `0${value}` : value;
+  ).padStart(2, "0")}:${String(displaycentiseconds).padStart(2, "0")}`;
 }
 
 function resetTimer() {
