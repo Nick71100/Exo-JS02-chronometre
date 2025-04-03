@@ -1,50 +1,63 @@
 "use strict";
-let timer,
-  centiseconds = 0,
-  running = false;
-const display = document.getElementById("chrono");
-display.textContent = "00:00:00";
+let timer;
+let seconds = 0;
+let milliseconds = 0;
+let isRunning = false;
 
-document.body.appendChild(createButton("toggle", "Start", toggleTimer));
-document.body.appendChild(createButton("reset", "Reset", resetTimer));
+const chronoDisplay = document.getElementById("chrono");
+const startBtn = document.getElementById("start-btn");
+const resetBtn = document.getElementById("reset-btn");
 
-function createButton(id, text, handler) {
-  const btn = document.createElement("button");
-  btn.id = id;
-  btn.textContent = text;
-  btn.addEventListener("click", handler);
-  return btn;
+function startStopTimer() {
+  if (isRunning) {
+    clearTimeout(timer);
+    startBtn.textContent = "Start";
+  } else {
+    startTimer();
+    startBtn.textContent = "Stop";
+  }
+  isRunning = !isRunning;
 }
 
-function toggleTimer() {
-  running = !running;
-  document.getElementById("toggle").textContent = running ? "Stop" : "Start";
-  if (running) updateTime();
-  else clearTimeout(timer);
+function startTimer() {
+  timer = setTimeout(function () {
+    milliseconds++;
+    if (milliseconds >= 100) {
+      milliseconds = 0;
+      seconds++;
+    }
+    if (seconds >= 60) {
+      seconds = 0;
+    }
+
+    updateDisplay();
+
+    if (isRunning) startTimer();
+  }, 10);
+}
+
+function updateDisplay() {
+  const minutes = Math.floor(seconds / 60);
+  const displaySeconds = seconds % 60;
+  const displayMilliseconds = milliseconds;
+
+  chronoDisplay.textContent = `${padZero(minutes)}:${padZero(
+    displaySeconds
+  )}:${padZero(displayMilliseconds)}`;
+}
+
+function padZero(value) {
+  return value < 10 ? `0${value}` : value;
 }
 
 function resetTimer() {
   clearTimeout(timer);
-  running = false;
-  centiseconds = 0;
-  updateDisplay();
-  document.getElementById("toggle").textContent = "Start";
+  seconds = 0;
+  milliseconds = 0;
+  chronoDisplay.textContent = "00:00:00";
+  startBtn.textContent = "Start";
+  isRunning = false;
 }
 
-function updateTime() {
-  if (!running) return;
-  centiseconds++;
-  updateDisplay();
-  timer = setTimeout(updateTime, 10);
-}
-
-function updateDisplay() {
-  let mins = Math.floor(centiseconds / 6000)
-    .toString()
-    .padStart(2, "0");
-  let secs = Math.floor((centiseconds % 6000) / 100)
-    .toString()
-    .padStart(2, "0");
-  let centis = (centiseconds % 100).toString().padStart(2, "0");
-  display.textContent = `${mins}:${secs}:${centis}`;
-}
+startBtn.addEventListener("click", startStopTimer);
+resetBtn.addEventListener("click", resetTimer);
