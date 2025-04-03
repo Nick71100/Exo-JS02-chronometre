@@ -1,7 +1,7 @@
 "use strict";
 let timer;
 let seconds = 0;
-let milliseconds = 0;
+let centiseconds = 0;
 let isRunning = false;
 
 const chronoDisplay = document.getElementById("chrono");
@@ -21,9 +21,9 @@ function startStopTimer() {
 
 function startTimer() {
   timer = setTimeout(function () {
-    milliseconds++;
-    if (milliseconds >= 100) {
-      milliseconds = 0;
+    centiseconds++;
+    if (centiseconds >= 100) {
+      centiseconds = 0;
       seconds++;
     }
     if (seconds >= 60) {
@@ -39,11 +39,11 @@ function startTimer() {
 function updateDisplay() {
   const minutes = Math.floor(seconds / 60);
   const displaySeconds = seconds % 60;
-  const displayMilliseconds = milliseconds;
+  const displayCentiseconds = centiseconds;
 
   chronoDisplay.textContent = `${padZero(minutes)}:${padZero(
     displaySeconds
-  )}:${padZero(displayMilliseconds)}`;
+  )}:${padZero(displayCentiseconds)}`;
 }
 
 function padZero(value) {
@@ -53,7 +53,7 @@ function padZero(value) {
 function resetTimer() {
   clearTimeout(timer);
   seconds = 0;
-  milliseconds = 0;
+  centiseconds = 0;
   chronoDisplay.textContent = "00:00:00";
   startBtn.textContent = "Start";
   isRunning = false;
